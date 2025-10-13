@@ -20,10 +20,9 @@ It exposes a **Flask API** for viewing events, and includes a **React Native iOS
 
 ## 📂 Project Structure
 
+```text
 security-cam/
-
 ├── app/
-
 │ ├── api.py # Flask API (serves events & images)
 │ ├── main.py # Core vision loop (motion + face)
 │ ├── face.py # Face detection & embedding
@@ -48,6 +47,7 @@ security-cam/
 ├── docker-compose.yml
 ├── wsgi.py # Gunicorn entrypoint
 └── README.md
+```
 
 ---
 
