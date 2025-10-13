@@ -51,13 +51,13 @@ security-cam/
 
 ---
 
-## 🚀 Quick Start
-
-🐳 Docker Deployment
+## 🐳 Docker Deployment
 Runs continuously on a Raspberry Pi or mini PC.
 
+```bash
 docker compose build
 docker compose up -d
+```
 Services
 worker – motion + face loop
 
@@ -65,16 +65,17 @@ api – Flask server at http://<device-ip>:5000
 
 All events and images are stored in ./data/events.
 
-📱 iOS App (React Native CLI + Xcode)
+## 📱 iOS App (React Native CLI + Xcode)
 Setup
 Open mobile-native/ios/SecurityCamMobile.xcworkspace in Xcode.
 
 Plug in your iPhone → set Team (free Apple ID) → Run.
 
 Edit mobile-native/src/config.js:
-
+```bash
 export const BACKEND_URL = "http://<device-ip>:5000";
 export const API_KEY = "<optional-key>";
+```
 Features
 Lists all events from Flask API
 
@@ -84,9 +85,9 @@ Works locally on your Wi-Fi or over Tailscale VPN
 
 ## 🔒 API Overview
 Endpoint	Description
-/healthz	Simple ping
-/api/events	JSON list of recent events
-/events/<filename>	Serves snapshot images
+- /healthz	Simple ping
+- /api/events	JSON list of recent events
+- /events/<filename>	Serves snapshot images
 
 All data lives locally — no cloud upload required.
 
@@ -103,21 +104,27 @@ Add a daily cleanup cron job for old events (example script: scripts/cleanup_eve
 
 ## 🧰 Hardware Options
 Component	Example
-Brain	Raspberry Pi 4 (4 GB) or Intel NUC
-Camera	USB webcam (e.g. Logitech C270) or RTSP IP camera
-Power	Pi USB-C supply + 32 GB micro-SD
-Network	Wi-Fi or Ethernet (same network as your phone)
+- Brain	Raspberry Pi 4 (4 GB) or Intel NUC
+- Camera	USB webcam (e.g. Logitech C270) or RTSP IP camera
+- Power	Pi USB-C supply + 32 GB micro-SD
+- Network	Wi-Fi or Ethernet (same network as your phone)
 
 ## 🪄 Useful Commands
 view running containers
+```bash
 docker compose ps
+```
 
 follow logs
+```bash
 docker compose logs -f worker
 docker compose logs -f api
+```
 
 rebuild and restart
+```bash
 docker compose down && docker compose build && docker compose up -d
+```
 ## 🧠 Acknowledgements
 OpenCV
 
