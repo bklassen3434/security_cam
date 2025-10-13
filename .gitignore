@@ -48,7 +48,6 @@ docker-compose.override.yml
 # =====================
 # Node / React Native
 # =====================
-mobile-native/
 mobile/node_modules/
 mobile-native/node_modules/
 npm-debug.log*
