@@ -59,9 +59,8 @@ docker compose build
 docker compose up -d
 ```
 Services
-worker – motion + face loop
-
-api – Flask server at http://<device-ip>:5000
+- worker – motion + face loop
+- api – Flask server at http://<device-ip>:5000
 
 All events and images are stored in ./data/events.
 
@@ -84,10 +83,10 @@ Tap an event for full image + details
 Works locally on your Wi-Fi or over Tailscale VPN
 
 ## 🔒 API Overview
-Endpoint	Description
-- /healthz	Simple ping
-- /api/events	JSON list of recent events
-- /events/<filename>	Serves snapshot images
+Endpoint: Description
+- /healthz:	Simple ping
+- /api/events:	JSON list of recent events
+- /events/<filename>:	Serves snapshot images
 
 All data lives locally — no cloud upload required.
 
@@ -103,11 +102,11 @@ Use environment variable SECURITYCAM_API_KEY to protect the API.
 Add a daily cleanup cron job for old events (example script: scripts/cleanup_events.py).
 
 ## 🧰 Hardware Options
-Component	Example
-- Brain	Raspberry Pi 4 (4 GB) or Intel NUC
-- Camera	USB webcam (e.g. Logitech C270) or RTSP IP camera
-- Power	Pi USB-C supply + 32 GB micro-SD
-- Network	Wi-Fi or Ethernet (same network as your phone)
+Component:	Example
+- Brain:	Raspberry Pi 4 (4 GB) or Intel NUC
+- Camera:	USB webcam (e.g. Logitech C270) or RTSP IP camera
+- Power:	Pi USB-C supply + 32 GB micro-SD
+- Network:	Wi-Fi or Ethernet (same network as your phone)
 
 ## 🪄 Useful Commands
 view running containers
