@@ -1,0 +1,38 @@
+camera_index: 0
+frame_width: 640
+frame_height: 480
+show_window: false
+
+input:
+  source: "usb"
+  camera_index: 0
+  rtsp_url: ""
+
+
+motion:
+  enabled: true
+  threshold: 25
+  min_area: 2000
+  visualize: true
+
+face:
+  enabled: true
+  min_face_size: 80
+  min_det_score: 0.60
+  match_metric: "cosine"    # or "l2"
+  max_distance: 0.45        # start here for cosine; we'll tune
+  det_size: [320, 320]
+  visualize: true
+  enroll_dir: "data/enroll/ben"   # put your selfies here
+
+events:
+  dir: "data/events"
+  csv_path: "data/events/events.csv"
+  cooldown_sec: 15      # do not log more than once within this window
+
+notify:
+  desktop: true
+
+  telegram:
+    enabled: true
+    body_template: "Unknown face at {time}"

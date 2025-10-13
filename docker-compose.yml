@@ -1,0 +1,28 @@
+services:
+  api:
+    build: .
+    command: gunicorn --workers 2 --bind 0.0.0.0:5050 wsgi:app
+    environment:
+      - SECURITYCAM_API_KEY=${SECURITYCAM_API_KEY:-}
+      - INSIGHTFACE_HOME=/app/models
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    restart: unless-stopped
+
+  # worker:
+  #   build: .
+  #   command: python -m app.worker
+  #   environment:
+  #     - INSIGHTFACE_HOME=/app/models
+  #   volumes:
+  #     - ./data:/app/data
+  #     - ./models:/app/models
+  #     - ./config.yaml:/app/config.yaml:ro
+  #   devices:
+  #     - "/dev/video0:/dev/video0"
+  #   depends_on:
+  #     - api
+  #   restart: unless-stopped

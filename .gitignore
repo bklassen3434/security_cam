@@ -1,0 +1,77 @@
+# =====================
+# Python environment
+# =====================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.DS_Store
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# =====================
+# Data & model outputs
+# =====================
+data/events/*
+!data/events/.gitkeep       # keep folder structure
+data/enroll/*
+!data/enroll/.gitkeep
+models/
+!.gitkeep                   # keep empty folder placeholders
+
+# =====================
+# Local config / secrets
+# =====================
+config.yaml                 # your local camera + path config
+.env                        # environment vars (API keys, tokens, etc)
+
+# =====================
+# Build artifacts & caches
+# =====================
+*.egg-info/
+dist/
+build/
+*.spec
+
+# =====================
+# Docker
+# =====================
+*.pid
+*.sock
+docker-compose.override.yml
+
+# =====================
+# Node / React Native
+# =====================
+mobile-native/
+mobile/node_modules/
+mobile-native/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.expo/
+.expo-shared/
+ios/Pods/
+ios/build/
+android/build/
+android/.gradle/
+android/app/build/
+
+# =====================
+# IDE / Editor junk
+# =====================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =====================
+# System files
+# =====================
+Thumbs.db
