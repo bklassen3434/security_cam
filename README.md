@@ -80,7 +80,7 @@ Tap an event for full image + details
 
 Works locally on your Wi-Fi or over Tailscale VPN
 
-🔒 API Overview
+## 🔒 API Overview
 Endpoint	Description
 /healthz	Simple ping
 /api/events	JSON list of recent events
@@ -88,7 +88,7 @@ Endpoint	Description
 
 All data lives locally — no cloud upload required.
 
-🧱 Production Tips
+## 🧱 Production Tips
 Use a Raspberry Pi 4 or small mini-PC (Ubuntu, Docker Compose).
 
 Keep show_window: false for headless operation.
@@ -99,24 +99,24 @@ Use environment variable SECURITYCAM_API_KEY to protect the API.
 
 Add a daily cleanup cron job for old events (example script: scripts/cleanup_events.py).
 
-🧰 Hardware Options
+## 🧰 Hardware Options
 Component	Example
 Brain	Raspberry Pi 4 (4 GB) or Intel NUC
 Camera	USB webcam (e.g. Logitech C270) or RTSP IP camera
 Power	Pi USB-C supply + 32 GB micro-SD
 Network	Wi-Fi or Ethernet (same network as your phone)
 
-🪄 Useful Commands
-# view running containers
+## 🪄 Useful Commands
+view running containers
 docker compose ps
 
-# follow logs
+follow logs
 docker compose logs -f worker
 docker compose logs -f api
 
-# rebuild and restart
+rebuild and restart
 docker compose down && docker compose build && docker compose up -d
-🧠 Acknowledgements
+## 🧠 Acknowledgements
 OpenCV
 
 InsightFace
@@ -127,5 +127,5 @@ React Native
 
 Docker Compose
 
-🪪 License
+## 🪪 License
 MIT License.
