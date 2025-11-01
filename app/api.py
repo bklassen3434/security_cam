@@ -2,6 +2,14 @@ from __future__ import annotations
 from flask import Flask, jsonify, send_from_directory, request
 from pathlib import Path
 import csv
+from werkzeug.utils import secure_filename
+from .users import load_users, create_user, get_user, user_enroll_path, ENROLL_DIR
+from .face import FaceEngine, load_all_user_galleries
+import os
+
+ENGINE = None
+GALLERIES = {}
+MIN_FACE_SIZE = 80
 
 app = Flask(__name__)
 
@@ -68,3 +76,65 @@ def list_events():
 @app.get("/events/<path:filename>")
 def serve_event_image(filename: str):
     return send_from_directory(EVENTS_DIR, filename, as_attachment=False)
+
+@app.before_first_request
+def init_face_engine():
+    global ENGINE, GALLERIES
+    if ENGINE is None:
+        from .face import FaceEngine
+        ENGINE = FaceEngine(providers=["CPUExecutionProvider"], det_size=(640, 640), min_det_score=0.60)
+    users = load_users()
+    GALLERIES = load_all_user_galleries(users, ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
+
+def refresh_galleries():
+    global GALLERIES
+    users = load_users()
+    GALLERIES = load_all_user_galleries(users, ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
+
+@app.post("/api/users")
+def api_create_user():
+    data = request.get_json(silent=True) or {}
+    name = (data.get("name") or "").strip()
+    if not name:
+        return jsonify({"error": "name required"}), 400
+    user = create_user(name)
+    # refresh galleries so new empty user exists
+    refresh_galleries()
+    return jsonify({"user": user}), 201
+
+@app.get("/api/users")
+def api_list_users():
+    return jsonify({"users": load_users()})
+
+ALLOWED_EXTS = {"jpg", "jpeg", "png", "JPG", "PNG"}
+
+@app.post("/api/users/<user_id>/photos")
+def api_upload_photos(user_id: str=None):
+    u = get_user(user_id)
+    if not u:
+        return jsonify({"error": "user not found"}), 404
+
+    files = request.files.getlist("files")
+    if not files:
+        return jsonify({"error": "no files"}), 400
+
+    save_dir = user_enroll_path(user_id)
+    save_dir.mkdir(parents=True, exist_ok=True)
+    saved = []
+
+    for f in files:
+        fname = secure_filename(f.filename or "")
+        ext = fname.rsplit(".", 1)[-1] if "." in fname else ""
+        if ext not in ALLOWED_EXTS:
+            continue
+        out = save_dir / fname
+        idx = 1
+        while out.exists():
+            out = save_dir / f"{out.stem}_{idx}.{ext}"
+            idx += 1
+        f.save(out)
+        saved.append(out.name)
+
+    # rebuild galleries for this user
+    refresh_galleries()
+    return jsonify({"ok": True, "saved": saved, "user_id": user_id})

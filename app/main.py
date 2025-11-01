@@ -10,8 +10,14 @@ from .video import VideoSource, to_gray_blur, detect_motion
 from .face import FaceEngine, load_gallery, cosine_dist_to_gallery, l2_dist_to_gallery
 from .notifier import notify_telegram, render_body
 from dotenv import load_dotenv
+from .users import load_users, ENROLL_DIR
+from .face import load_all_user_galleries, best_match_across_users
 
 def run():
+
+    last_refresh = time.monotonic()
+    refresh_every = 300.0
+
     load_dotenv()
     cfg = load_config()
 
@@ -57,7 +63,9 @@ def run():
             min_det_score=float(face_cfg.get("min_det_score", 0.60)),
         )
 
-    gallery = None
+    users = load_users()
+    galleries = load_all_user_galleries(users, engine, ENROLL_DIR, min_face_size=face_cfg.get("min_face_size", 80))
+    id_to_name = {u["id"]: u["name"] for u in users}
     
     if face_enabled and engine is not None:
         enroll_dir = face_cfg.get("enroll_dir", "data/enroll/ben")
@@ -79,6 +87,12 @@ def run():
 
     try:
         while True:
+            if time.monotonic() - last_refresh > refresh_every:
+                users = load_users()
+                galleries = load_all_user_galleries(users, engine, ENROLL_DIR, min_face_size=face_cfg.get("min_face_size", 80))
+                id_to_name = {u["id"]: u["name"] for u in users}
+                last_refresh = time.monotonic()
+
             frame = cam.read()
             frame_idx += 1
             gray = to_gray_blur(frame)
@@ -105,6 +119,7 @@ def run():
             faces = last_faces
 
             unknown_candidates = []
+            labeled_faces = []
 
             # Draw overlays if you want to see it
             if visualize and cfg.get("show_window", True):
@@ -112,29 +127,26 @@ def run():
                 # Face boxes (blue)
                 for f in faces:
                     fx, fy, fw, fh = f["bbox"]
-                    cv2.rectangle(frame, (fx, fy), (fx+fw, fy+fh), (255, 0, 0), 2)
                     emb = f["embedding"]
 
-                    if gallery is None or gallery.size == 0:
-                        label = "UNKNOWN (no gallery)"
-                        dist = float("inf")
+                    # best match across all users
+                    uid, dist = best_match_across_users(emb, galleries, metric=match_metric)
+                    if uid is not None and dist <= max_distance:
+                        label = id_to_name.get(uid, uid)
                     else:
-                        if match_metric == "l2":
-                            dist = l2_dist_to_gallery(emb, gallery)
-                            label = "BEN" if dist <= max_distance else "UNKNOWN"
-                        else:
-                            dist = cosine_dist_to_gallery(emb, gallery)
-                            label = "BEN" if dist <= max_distance else "UNKNOWN"
+                        label = "UNKNOWN"
 
-                    # Draw label + distance
-                    txt = f"{label}  d={dist:.3f}"
-                    cv2.putText(frame, txt, (fx, fy + fh + 20),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.6,
-                                (0, 255, 0) if label == "BEN" else (0, 0, 255), 2)
-                    
-                    # Collect unknowns for possible logging
+                    labeled_faces.append((label, dist, (fx, fy, fw, fh)))
+
                     if label == "UNKNOWN":
                         unknown_candidates.append((dist, (fx, fy, fw, fh), emb))
+
+                    for label, dist, (fx, fy, fw, fh) in labeled_faces:
+                        color = (0, 255, 0) if label != "UNKNOWN" else (0, 0, 255)
+                        cv2.rectangle(frame, (fx, fy), (fx+fw, fy+fh), color, 2)
+                        cv2.putText(frame, f"{label}", (fx, fy + fh + 20),
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+
 
                 # After reviewing all faces, decide whether to log one UNKNOWN
                 now_mono = time.monotonic()
