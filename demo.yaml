@@ -1,0 +1,32 @@
+show_window: true
+
+input:
+  source: "usb"
+  camera_index: 0
+
+motion:
+  enabled: true
+  threshold: 25
+  min_area: 1200
+  visualize: true
+
+face:
+  enabled: true
+  min_face_size: 80
+  min_det_score: 0.60
+  match_metric: "cosine"
+  max_distance: 0.45
+  det_size: [640, 640]
+  visualize: true
+  enroll_dir: "data/enroll/demo_user"
+
+events:
+  save_snapshot: true
+  dir: "demo_events"
+  csv_path: "demo_events/events.csv"
+  cooldown_sec: 15
+
+notify:
+  desktop: true
+  title: "SecurityCam (Demo)"
+  body_template: "Unknown face at {time}  d={distance:.3f}"

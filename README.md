@@ -91,22 +91,20 @@ Endpoint: Description
 All data lives locally — no cloud upload required.
 
 ## 🧱 Production Tips
-Use a Raspberry Pi 4 or small mini-PC (Ubuntu, Docker Compose).
+Raspberry Pi 4(Ubuntu, Docker Compose).
 
 Keep show_window: false for headless operation.
 
-Expose only on your LAN or use Tailscale for secure remote access.
+Expose only on your LAN.
 
-Use environment variable SECURITYCAM_API_KEY to protect the API.
-
-Add a daily cleanup cron job for old events (example script: scripts/cleanup_events.py).
+Environment variable SECURITYCAM_API_KEY to protect the API.
 
 ## 🧰 Hardware Options
 Component:	Example
-- Brain:	Raspberry Pi 4 (4 GB) or Intel NUC
+- Brain:	Raspberry Pi 4 (4 GB)
 - Camera:	USB webcam (e.g. Logitech C270) or RTSP IP camera
-- Power:	Pi USB-C supply + 32 GB micro-SD
-- Network:	Wi-Fi or Ethernet (same network as your phone)
+- Power:	Pi USB-C supply + 64 GB micro-SD
+- Network:	Wi-Fi (same network as your phone)
 
 ## 🪄 Useful Commands
 view running containers
@@ -124,6 +122,31 @@ rebuild and restart
 ```bash
 docker compose down && docker compose build && docker compose up -d
 ```
+
+## 🚀 Demo mode (runs on your laptop webcam)
+
+Requirements: Python 3.11+, pip, a built-in or USB webcam.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+- 1. Capture 5-10 pictures of yourself to build your local gallery
+```text
+data/enroll/demo_user
+```
+
+- 2. Run the demo loop (uses your webcam, shows a window)
+```bash
+python -m app.main --demo
+```
+    - Press q to exit the preview window.
+
+    - Snapshots + CSV are written under demo_events/.
+
 ## 🧠 Acknowledgements
 OpenCV
 

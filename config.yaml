@@ -20,10 +20,10 @@ face:
   min_face_size: 80
   min_det_score: 0.60
   match_metric: "cosine"    # or "l2"
-  max_distance: 0.45        # start here for cosine; we'll tune
+  max_distance: 0.45
   det_size: [320, 320]
   visualize: true
-  enroll_dir: "data/enroll/ben"   # put your selfies here
+  enroll_dir: "data/enroll/ben"
 
 events:
   dir: "data/events"

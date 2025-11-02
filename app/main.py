@@ -3,9 +3,12 @@ import numpy as np
 from pathlib import Path
 import time
 import os
+import sys
+import argparse
+import yaml
 from datetime import datetime
 from .storage import save_snapshot, log_event_csv
-from .config import load_config
+from .config import load_config, update_config
 from .video import VideoSource, to_gray_blur, detect_motion
 from .face import FaceEngine, cosine_dist_to_gallery, l2_dist_to_gallery
 from .notifier import notify_telegram, render_body
@@ -18,13 +21,25 @@ def run():
     last_refresh = time.monotonic()
     refresh_every = 300.0
 
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--demo", action="store_true")
+    args, _ = parser.parse_known_args()
+
     load_dotenv()
     cfg = load_config()
 
+    if args.demo:
+        try:
+            with open("demo.yaml", "r") as f:
+                demo_cfg = yaml.safe_load(f) or {}
+            cfg = update_config(cfg, demo_cfg)
+            print("[DEMO] Applied demo.yaml overrides")
+        except Exception as e:
+            print(f"[DEMO] Could not load demo.yaml: {e}")
+
     src_cfg = cfg.get("input", {})
     use_rtsp = src_cfg.get("source", "usb") == "rtsp"
-    # rtsp_url = src_cfg.get("rtsp_url", "") if use_rtsp else None
-    rtsp_url = None
+    rtsp_url = src_cfg.get("rtsp_url", "") if use_rtsp else None
 
     cam = VideoSource(
         cfg.get("camera_index", src_cfg.get("camera_index", 0)),
