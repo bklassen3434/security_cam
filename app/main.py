@@ -7,7 +7,7 @@ from datetime import datetime
 from .storage import save_snapshot, log_event_csv
 from .config import load_config
 from .video import VideoSource, to_gray_blur, detect_motion
-from .face import FaceEngine, load_gallery, cosine_dist_to_gallery, l2_dist_to_gallery
+from .face import FaceEngine, cosine_dist_to_gallery, l2_dist_to_gallery
 from .notifier import notify_telegram, render_body
 from dotenv import load_dotenv
 from .users import load_users, ENROLL_DIR
