@@ -23,7 +23,8 @@ def run():
 
     src_cfg = cfg.get("input", {})
     use_rtsp = src_cfg.get("source", "usb") == "rtsp"
-    rtsp_url = src_cfg.get("rtsp_url", "") if use_rtsp else None
+    # rtsp_url = src_cfg.get("rtsp_url", "") if use_rtsp else None
+    rtsp_url = None
 
     cam = VideoSource(
         cfg.get("camera_index", src_cfg.get("camera_index", 0)),
