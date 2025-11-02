@@ -23,6 +23,7 @@ services:
       - ./config.yaml:/app/config.yaml:ro
     devices:
       - /dev/video0:/dev/video0
+    privileged: true
     depends_on:
       - api
     restart: unless-stopped
