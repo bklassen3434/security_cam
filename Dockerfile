@@ -21,11 +21,10 @@ COPY wsgi.py ./wsgi.py
 RUN mkdir -p /app/data/events /app/data/enroll /app/models
 ENV INSIGHTFACE_HOME=/app/models
 
-# Create video group with GID 44, add runner user to it
-RUN usermod -aG video runner
-
 # non-root user
 RUN useradd -m runner
+# Add runner user to it
+RUN usermod -aG video runner
 USER runner
 
 # default is no command because compose will pass it
