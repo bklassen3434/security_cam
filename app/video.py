@@ -6,12 +6,16 @@ class VideoSource:
         if rtsp_url:
             self.cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
         else:
-            self.cap = cv2.VideoCapture(camera_index)
-            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+            self.cap = cv2.VideoCapture(camera_index, cv2.CAP_V4L2)
 
-        if not self.cap.isOpened():
-            raise RuntimeError(f"Could not open video source")
+            _set_if_supported(self.cap, cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
+
+            _set_if_supported(self.cap, cv2.CAP_PROP_FRAME_WIDTH,  width)
+            _set_if_supported(self.cap, cv2.CAP_PROP_FRAME_HEIGHT, height)
+            _set_if_supported(self.cap, cv2.CAP_PROP_FPS, 15)
+
+        if not self.cap or not self.cap.isOpened():
+            raise RuntimeError("Could not open video source (V4L2)")
 
     def read(self):
         ok, frame = self.cap.read()
@@ -22,6 +26,12 @@ class VideoSource:
     def release(self):
         if self.cap:
             self.cap.release()
+
+def _set_if_supported(cap, prop, value):
+    try:
+        cap.set(prop, value)
+    except Exception:
+        pass
 
 def to_gray_blur(frame_bgr):
     """Fast pre-processing: grayscale + Gaussian blur to reduce noise."""
