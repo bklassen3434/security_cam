@@ -22,8 +22,7 @@ RUN mkdir -p /app/data/events /app/data/enroll /app/models
 ENV INSIGHTFACE_HOME=/app/models
 
 # Create video group with GID 44, add runner user to it
-RUN groupadd -g 44 video \
-    && usermod -aG video runner
+RUN usermod -aG video runner
 
 # non-root user
 RUN useradd -m runner
