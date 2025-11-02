@@ -1,16 +1,7 @@
-# Core
 flask==3.0.3
 pyyaml==6.0.2
 numpy==1.26.4
-
-# CV + Face
 insightface==0.7.3
-
-# ONNX Runtime (pick the right wheel automatically)
-# - macOS Apple Silicon uses onnxruntime-silicon
-# - everything else uses onnxruntime
-onnxruntime==1.18.1; not (platform_system == "Darwin" and platform_machine == "arm64")
-onnxruntime-silicon==1.18.1; platform_system == "Darwin" and platform_machine == "arm64"
-
-# OpenCV with GUI for local preview
+onnxruntime==1.18.1
 opencv-python==4.10.0.84
+python-dotenv==1.0.1

@@ -3,25 +3,23 @@ import numpy as np
 
 class VideoSource:
     def __init__(self, camera_index: int, width: int, height: int, rtsp_url: str | None = None):
-        if rtsp_url:
-            self.cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
-        else:
-            self.cap = cv2.VideoCapture(camera_index, cv2.CAP_V4L2)
-
-            _set_if_supported(self.cap, cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
-
-            _set_if_supported(self.cap, cv2.CAP_PROP_FRAME_WIDTH,  width)
-            _set_if_supported(self.cap, cv2.CAP_PROP_FRAME_HEIGHT, height)
-            _set_if_supported(self.cap, cv2.CAP_PROP_FPS, 15)
-
+        self.cap = cv2.VideoCapture(rtsp_url if rtsp_url else camera_index)
         if not self.cap or not self.cap.isOpened():
-            raise RuntimeError("Could not open video source (V4L2)")
+            raise RuntimeError("Could not open video source")
+
+        _set_if_supported(self.cap, cv2.CAP_PROP_FRAME_WIDTH,  width)
+        _set_if_supported(self.cap, cv2.CAP_PROP_FRAME_HEIGHT, height)
+        _set_if_supported(self.cap, cv2.CAP_PROP_FPS, 15)
+
+        ok, _ = self.cap.read()
+        if not ok:
+            raise RuntimeError("Camera opened but no frames. Try a different camera_index (0,1,2).")
 
     def read(self):
         ok, frame = self.cap.read()
         if not ok:
             raise RuntimeError("Failed to read frame from camera")
-        return frame  # BGR
+        return frame
 
     def release(self):
         if self.cap:

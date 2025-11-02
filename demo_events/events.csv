@@ -1,0 +1,3 @@
+timestamp,label,distance,bbox_x,bbox_y,bbox_w,bbox_h,image_path
+2025-11-02T14:20:30,UNKNOWN,inf,296,187,189,274,demo_events/2025-11-02_14-20-30_unknown.jpg
+2025-11-02T14:20:45,UNKNOWN,inf,219,154,163,246,demo_events/2025-11-02_14-20-45_unknown.jpg

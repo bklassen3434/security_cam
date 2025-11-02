@@ -16,7 +16,7 @@ face:
   min_det_score: 0.60
   match_metric: "cosine"
   max_distance: 0.45
-  det_size: [640, 640]
+  det_size: [320, 320]
   visualize: true
   enroll_dir: "data/enroll/demo_user"
 
@@ -28,5 +28,6 @@ events:
 
 notify:
   desktop: true
-  title: "SecurityCam (Demo)"
-  body_template: "Unknown face at {time}  d={distance:.3f}"
+
+  telegram:
+    enabled: false

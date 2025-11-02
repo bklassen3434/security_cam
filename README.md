@@ -134,15 +134,16 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-- 1. Capture 5-10 pictures of yourself to build your local gallery
+- Capture 5-10 pictures of yourself to build your local gallery
 ```text
 data/enroll/demo_user
 ```
 
-- 2. Run the demo loop (uses your webcam, shows a window)
+- Run the demo loop (uses your webcam, shows a window)
 ```bash
-python -m app.main --demo
+python -m app.worker --demo
 ```
+
     - Press q to exit the preview window.
 
     - Snapshots + CSV are written under demo_events/.

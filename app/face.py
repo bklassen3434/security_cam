@@ -73,10 +73,7 @@ def l2_dist_to_gallery(emb: np.ndarray, gallery: np.ndarray) -> float:
     dists = np.sqrt(np.sum(diffs * diffs, axis=1))
     return float(np.min(dists))
 
-# --- Multi-user gallery support ---
-
 def build_gallery_for_dir(dir_path: Path, engine: FaceEngine, min_face_size: int = 80) -> np.ndarray:
-    """Like load_gallery(), but takes a Path and returns (N,512) or empty."""
     paths = []
     for ext in ("*.jpg","*.jpeg","*.png","*.JPG","*.PNG"):
         paths.extend(dir_path.glob(ext))

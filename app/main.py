@@ -6,13 +6,13 @@ import os
 import sys
 import argparse
 import yaml
+from dotenv import load_dotenv
 from datetime import datetime
 from .storage import save_snapshot, log_event_csv
 from .config import load_config, update_config
 from .video import VideoSource, to_gray_blur, detect_motion
-from .face import FaceEngine, cosine_dist_to_gallery, l2_dist_to_gallery
+from .face import FaceEngine, build_gallery_for_dir, cosine_dist_to_gallery, l2_dist_to_gallery
 from .notifier import notify_telegram, render_body
-from dotenv import load_dotenv
 from .users import load_users, ENROLL_DIR
 from .face import load_all_user_galleries, best_match_across_users
 
@@ -84,13 +84,13 @@ def run():
     id_to_name = {u["id"]: u["name"] for u in users}
     
     if face_enabled and engine is not None:
-        enroll_dir = face_cfg.get("enroll_dir", "data/enroll/ben")
+        enroll_dir = face_cfg.get("enroll_dir")
         gallery_cache = Path(enroll_dir) / "gallery.npy"
         if gallery_cache.exists():
             gallery = np.load(gallery_cache)
             print(f"[Face] Loaded cached gallery with {gallery.shape[0]} embeddings from {gallery_cache}")
         else:
-            gallery = load_gallery(enroll_dir, engine, min_face_size=face_cfg.get("min_face_size", 80))
+            gallery = build_gallery_for_dir(Path(enroll_dir), engine, min_face_size=face_cfg.get("min_face_size", 80))
             print(f"[Face] Built new gallery with {gallery.shape[0]} embeddings from {enroll_dir}")
             np.save(gallery_cache, gallery)
 
@@ -191,8 +191,6 @@ def run():
                     last_event_t = now_mono
                 
                 cv2.imshow("SecurityCam (Preview)", frame)
-                # Optional: show the mask in a second window for debugging
-                # if mask is not None: cv2.imshow("Motion Mask", mask)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
