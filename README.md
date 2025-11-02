@@ -1,4 +1,4 @@
-# 🧠 SecurityCam – AI-Powered Home Security System
+# 🧠 Security Camera / Home Security System
 
 A fully local, privacy-preserving home security stack that uses **computer vision** to detect motion, recognize faces, and send alerts via **Telegram** (or SMS).  
 It exposes a **Flask API** for viewing events, and includes a **React Native iOS app** for browsing snapshots and metadata.
@@ -136,15 +136,15 @@ Notes:
 - Snapshots + CSV are written under demo_events/
 
 ## 🧠 Acknowledgements
-OpenCV
+- OpenCV
 
-InsightFace
+- InsightFace
 
-Flask
+- Flask
 
-React Native
+- React Native
 
-Docker Compose
+- Docker
 
 ## 🪪 License
 MIT License.
