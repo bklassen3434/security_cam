@@ -23,7 +23,7 @@ face:
   max_distance: 0.45
   det_size: [320, 320]
   visualize: true
-  enroll_dir: "data/enroll/ben"
+  enroll_dir: "data/enroll/user"
 
 events:
   dir: "data/events"

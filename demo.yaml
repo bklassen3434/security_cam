@@ -22,8 +22,8 @@ face:
 
 events:
   save_snapshot: true
-  dir: "demo_events"
-  csv_path: "demo_events/events.csv"
+  dir: "data/demo_events"
+  csv_path: "data/demo_events/events.csv"
   cooldown_sec: 15
 
 notify:
