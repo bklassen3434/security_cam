@@ -20,8 +20,13 @@ COPY wsgi.py ./wsgi.py
 # create dirs for data and models
 RUN mkdir -p /app/data/events /app/data/enroll /app/models
 ENV INSIGHTFACE_HOME=/app/models
-# RUN mkdir -p /app/models && \
-#     python -c "from insightface.app import FaceAnalysis as F; a=F(name='buffalo_l'); a.prepare(ctx_id=0, det_size=(320,320))"
+# Pre-fetch InsightFace models at build time
+RUN python - <<'PY'
+from insightface.app import FaceAnalysis
+app = FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
+app.prepare(ctx_id=0, det_size=(640,640))
+print("Models ready")
+PY
 
 # non-root user
 RUN useradd -m runner

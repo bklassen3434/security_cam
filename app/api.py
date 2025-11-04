@@ -6,14 +6,10 @@ from werkzeug.utils import secure_filename
 from .users import load_users, create_user, get_user, user_enroll_path, ENROLL_DIR
 from .face import FaceEngine, load_all_user_galleries
 import os
-from threading import Lock
 
 ENGINE = None
 GALLERIES = {}
 MIN_FACE_SIZE = 80
-
-_initialized = False
-_init_lock = Lock()
 
 app = Flask(__name__)
 
@@ -81,30 +77,24 @@ def list_events():
 def serve_event_image(filename: str):
     return send_from_directory(EVENTS_DIR, filename, as_attachment=False)
 
-# @app.before_first_request
-# def init_face_engine():
-#     global ENGINE, GALLERIES
-#     if ENGINE is None:
-#         from .face import FaceEngine
-#         ENGINE = FaceEngine(providers=["CPUExecutionProvider"], det_size=(640, 640), min_det_score=0.60)
-#     users = load_users()
-#     GALLERIES = load_all_user_galleries(users, ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
-
 def init_face_engine():
     global ENGINE, GALLERIES
     if ENGINE is None:
         ENGINE = FaceEngine(providers=["CPUExecutionProvider"], det_size=(640, 640), min_det_score=0.60)
         GALLERIES = load_all_user_galleries(load_users(), ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
+        print("[INIT] Face engine initialized")
 
-@app.before_request
-def ensure_initialized():
-    """Lazy initialize once per process."""
-    global _initialized
-    if not _initialized:
-        with _init_lock:
-            if not _initialized:
-                init_face_engine()
-                _initialized = True
+init_face_engine()
+
+# @app.before_request
+# def ensure_initialized():
+#     """Lazy initialize once per process."""
+#     global _initialized
+#     if not _initialized:
+#         with _init_lock:
+#             if not _initialized:
+#                 init_face_engine()
+#                 _initialized = True
 
 def refresh_galleries():
     global GALLERIES
