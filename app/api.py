@@ -6,10 +6,14 @@ from werkzeug.utils import secure_filename
 from .users import load_users, create_user, get_user, user_enroll_path, ENROLL_DIR
 from .face import FaceEngine, load_all_user_galleries
 import os
+from threading import Lock
 
 ENGINE = None
 GALLERIES = {}
 MIN_FACE_SIZE = 80
+
+_initialized = False
+_init_lock = Lock()
 
 app = Flask(__name__)
 
@@ -92,9 +96,15 @@ def init_face_engine():
         ENGINE = FaceEngine(providers=["CPUExecutionProvider"], det_size=(640, 640), min_det_score=0.60)
         GALLERIES = load_all_user_galleries(load_users(), ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
 
-@app.before_serving
-def _init_on_serve():
-    init_face_engine()
+@app.before_request
+def ensure_initialized():
+    """Lazy initialize once per process."""
+    global _initialized
+    if not _initialized:
+        with _init_lock:
+            if not _initialized:
+                init_face_engine()
+                _initialized = True
 
 def refresh_galleries():
     global GALLERIES
