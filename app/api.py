@@ -77,14 +77,24 @@ def list_events():
 def serve_event_image(filename: str):
     return send_from_directory(EVENTS_DIR, filename, as_attachment=False)
 
-@app.before_first_request
+# @app.before_first_request
+# def init_face_engine():
+#     global ENGINE, GALLERIES
+#     if ENGINE is None:
+#         from .face import FaceEngine
+#         ENGINE = FaceEngine(providers=["CPUExecutionProvider"], det_size=(640, 640), min_det_score=0.60)
+#     users = load_users()
+#     GALLERIES = load_all_user_galleries(users, ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
+
 def init_face_engine():
     global ENGINE, GALLERIES
     if ENGINE is None:
-        from .face import FaceEngine
         ENGINE = FaceEngine(providers=["CPUExecutionProvider"], det_size=(640, 640), min_det_score=0.60)
-    users = load_users()
-    GALLERIES = load_all_user_galleries(users, ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
+        GALLERIES = load_all_user_galleries(load_users(), ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
+
+@app.before_serving
+def _init_on_serve():
+    init_face_engine()
 
 def refresh_galleries():
     global GALLERIES

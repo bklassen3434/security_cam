@@ -21,6 +21,8 @@ data/events/*
 !data/events/.gitkeep       # keep folder structure
 data/enroll/*
 !data/enroll/.gitkeep
+!data/enroll/user/.gitkeep
+!data/enroll/demo_user/.gitkeep
 data/demo_events/*
 !data/demo_events/.gitkeep
 models/
