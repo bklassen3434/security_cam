@@ -17,17 +17,12 @@ ENV/
 # =====================
 # Data & model outputs
 # =====================
-# data/**
-# !data/**/.gitkeep
-# Ignore everything inside these folders
-data/events/*
-data/enroll/*
-data/enroll/user/*
-data/enroll/demo_user/*
-data/demo_events/*
-models/*
 
-# Keep only the folder structure (.gitkeep files)
+# Ignore everything inside data and models
+data/**/*
+models/**/*
+
+# Keep only .gitkeep files
 !data/.gitkeep
 !data/events/.gitkeep
 !data/enroll/.gitkeep
@@ -35,6 +30,15 @@ models/*
 !data/enroll/demo_user/.gitkeep
 !data/demo_events/.gitkeep
 !models/.gitkeep
+
+# Unignore the directories themselves so the .gitkeep rules above actually apply
+!data/
+!data/events/
+!data/enroll/
+!data/enroll/user/
+!data/enroll/demo_user/
+!data/demo_events/
+!models/
 
 # =====================
 # Local config / secrets
