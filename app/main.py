@@ -15,6 +15,7 @@ from .face import FaceEngine, build_gallery_for_dir, cosine_dist_to_gallery, l2_
 from .notifier import notify_telegram, render_body
 from .users import load_users, ENROLL_DIR
 from .face import load_all_user_galleries, best_match_across_users
+from .engine_runtime import get_face_engine
 
 def run():
 
@@ -73,11 +74,12 @@ def run():
     face_enabled = face_cfg.get("enabled", True)
     engine = None
     if face_enabled:
-        engine = FaceEngine(
-            providers=["CPUExecutionProvider"],
-            det_size=tuple(face_cfg.get("det_size", [640, 640])),
-            min_det_score=float(face_cfg.get("min_det_score", 0.60)),
-        )
+        # engine = FaceEngine(
+        #     providers=["CPUExecutionProvider"],
+        #     det_size=tuple(face_cfg.get("det_size", [640, 640])),
+        #     min_det_score=float(face_cfg.get("min_det_score", 0.60)),
+        # )
+        engine = get_face_engine()
 
     users = load_users()
     galleries = load_all_user_galleries(users, engine, ENROLL_DIR, min_face_size=face_cfg.get("min_face_size", 80))
