@@ -29,6 +29,12 @@ def run():
     load_dotenv()
     cfg = load_config()
 
+    ### TEST ###
+    print("[diag] config loaded:", cfg)
+    print("[diag] motion:", cfg.get("motion"))
+    print("[diag] face:", cfg.get("face"))
+    print("[diag] notify:", cfg.get("notify"))
+
     if args.demo:
         try:
             with open("demo.yaml", "r") as f:
@@ -49,12 +55,28 @@ def run():
         rtsp_url=rtsp_url
         )
     
+    ### TEST ###
+    print("[diag] opening camera...")
+    ok, frame = cam.grab() if hasattr(cam, "grab") else (False, None)
+    print("[diag] camera probe:", ok)
+    
     notify_cfg = cfg.get("notify", {})
     
     telegram_cfg = notify_cfg.get("telegram", {})
     send_telegram = telegram_cfg.get("enabled")
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     chat_id = os.getenv("TELEGRAM_CHAT_ID")
+
+    ### TEST ###
+    try:
+        import requests
+        r = requests.get(
+            f"https://api.telegram.org/bot{bot_token}/sendMessage",
+            params={"chat_id": chat_id, "text": "✅ Startup OK: worker is live"}
+        )
+        print("[diag] telegram status:", r.status_code, r.text[:200])
+    except Exception as e:
+        print("[diag] telegram FAILED:", e)
     
     events_cfg = cfg.get("events", {})
     events_dir = events_cfg.get("dir", "data/events")
@@ -74,11 +96,6 @@ def run():
     face_enabled = face_cfg.get("enabled", True)
     engine = None
     if face_enabled:
-        # engine = FaceEngine(
-        #     providers=["CPUExecutionProvider"],
-        #     det_size=tuple(face_cfg.get("det_size", [640, 640])),
-        #     min_det_score=float(face_cfg.get("min_det_score", 0.60)),
-        # )
         engine = get_face_engine()
 
     users = load_users()

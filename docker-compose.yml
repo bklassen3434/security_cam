@@ -5,11 +5,13 @@ services:
     environment:
       - SECURITYCAM_API_KEY=${SECURITYCAM_API_KEY:-}
       - INSIGHTFACE_HOME=/app/models
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
     ports:
       - "5050:5050"
     volumes:
       - ./data:/app/data
-      - ./models:/app/models
+      # - ./models:/app/models
     restart: unless-stopped
 
   worker:
@@ -19,10 +21,12 @@ services:
       - INSIGHTFACE_HOME=/app/models
     volumes:
       - ./data:/app/data
-      - ./models:/app/models
+      # - ./models:/app/models
       - ./config.yaml:/app/config.yaml:ro
     devices:
       - /dev/video0:/dev/video0
+    group_add:
+      - video
     privileged: true
     depends_on:
       - api

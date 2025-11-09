@@ -19,7 +19,7 @@ face:
   enabled: true
   min_face_size: 80
   min_det_score: 0.60
-  match_metric: "cosine"    # or "l2"
+  match_metric: "cosine"
   max_distance: 0.45
   det_size: [320, 320]
   visualize: true
@@ -31,8 +31,6 @@ events:
   cooldown_sec: 15      # do not log more than once within this window
 
 notify:
-  desktop: true
-
   telegram:
     enabled: true
     body_template: "Unknown face at {time}"
