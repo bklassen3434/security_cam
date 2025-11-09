@@ -5,7 +5,6 @@ from pathlib import Path
 from insightface.app import FaceAnalysis
 
 # We use InsightFace's "FaceAnalysis" helper to detect faces and compute embeddings.
-# It auto-downloads small models on first use and caches them in ~/.insightface/models.
 
 class FaceEngine:
     """

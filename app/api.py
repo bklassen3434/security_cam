@@ -20,7 +20,6 @@ CSV_PATH = EVENTS_DIR / "events.csv"
 
 @app.after_request
 def add_cors_headers(resp):
-    # Allow your phone to call this from Expo Go
     resp.headers["Access-Control-Allow-Origin"] = "*"
     resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     resp.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
@@ -51,8 +50,7 @@ def list_events():
                 bbox_h = row.get("bbox_h", "")
                 img_path = row.get("image_path", "")
 
-                # Build an absolute image URL your phone can load
-                # Example: http://192.168.1.23:5000/events/2025-10-11_11-22-33_unknown.jpg
+                # Build an absolute image URL so phone can load
                 filename = Path(img_path).name if img_path else ""
                 base = request.host_url.rstrip("/")
                 image_url = f"{base}/events/{filename}" if filename else ""
@@ -78,19 +76,10 @@ def list_events():
 def serve_event_image(filename: str):
     return send_from_directory(EVENTS_DIR, filename, as_attachment=False)
 
-# def init_face_engine():
-#     global ENGINE, GALLERIES
-#     if ENGINE is None:
-#         ENGINE = FaceEngine(providers=["CPUExecutionProvider"], det_size=(640, 640), min_det_score=0.60)
-#         GALLERIES = load_all_user_galleries(load_users(), ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
-#         print("[INIT] Face engine initialized")
-
-# init_face_engine()
-
 def refresh_galleries():
     global GALLERIES
     users = load_users()
-    engine = get_face_engine()
+    ENGINE = get_face_engine()
     GALLERIES = load_all_user_galleries(users, ENGINE, ENROLL_DIR, min_face_size=MIN_FACE_SIZE)
 
 @app.post("/api/users")
